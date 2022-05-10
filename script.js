@@ -94,7 +94,16 @@ pizzaJson.map((pizza, index) => {
 });
 qs('.pizzaInfo--addButton').addEventListener('click', () => {
     let size = parseInt(qs('.pizzaInfo--size.selected').getAttribute('data-key'));
-    cart.push({
+    /*
+      Verificaremos se o item selecionado com o tamanho selecionado já está no array
+      em caso positivo só adicionaremos +1 na quantidade
+      em caso negativo damos um push no item
+      a variável isInCart retorna um boolean se algum item no array cart coicide com a seleção
+     */
+    let isInCart = cart.filter((item) => item.id === pizzaJson[modalKey].id && item.size === size).length > 0
+    isInCart ?
+    cart = cart.map((item) => item.id === pizzaJson[modalKey].id && item.size === size ? {...item, qt: item.qt + 1} : item)
+    : cart.push({
         id:pizzaJson[modalKey].id,
         size,
         qt:modalQt
