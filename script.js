@@ -92,6 +92,7 @@ pizzaJson.map((pizza, index) => {
     });
 
 });
+
 qs('.pizzaInfo--addButton').addEventListener('click', () => {
     let size = parseInt(qs('.pizzaInfo--size.selected').getAttribute('data-key'));
     /*
@@ -120,6 +121,7 @@ function updateCart(){
         for(let i in cart){
             let pizzaItem = pizzaJson.find((pizza)=>pizza.id === cart[i].id);
             let cartItem = qs('.models .cart--pizza').cloneNode(true);
+            let size = parseInt(qs('.pizzaInfo--size.selected').getAttribute('data-key'));
 
             let pizzaItemSizeName;
             switch (cart[i].size) {
@@ -135,7 +137,30 @@ function updateCart(){
             }
             let pizzaName = `${pizzaItem.name} (${pizzaItemSizeName})`;
             cartItem.querySelector('.cart--pizza-nome').innerHTML = pizzaName
-            cartItem.querySelector('.cart--pizza--qt').innerHTML = cart[i].qt
+            cartItem.querySelector('.cart--pizza--qt').innerHTML = cart[i].qt;
+            cartItem.querySelector('.cart--pizza-qtmenos').addEventListener('click', () => {
+                let qtmenos = cart.filter((item) => item.id === pizzaJson[modalKey].id && item.size === size).length > 0
+                qtmenos ?
+                    cart = cart.map((item) => item.id === pizzaJson[modalKey].id && item.size === size ? {...item, qt: item.qt - 1} : item)
+                    : cart.push({
+                        id:pizzaJson[modalKey].id,
+                        size,
+                        qt:modalQt
+                    });
+                    updateCart();
+            });
+            cartItem.querySelector('.cart--pizza-qtmais').addEventListener('click', () => {
+                let qtmais = cart.filter((item) => item.id === pizzaJson[modalKey].id && item.size === size).length > 0
+                qtmais ?
+                    cart = cart.map((item) => item.id === pizzaJson[modalKey].id && item.size === size ? {...item, qt: item.qt + 1} : item)
+                    : cart.push({
+                        id:pizzaJson[modalKey].id,
+                        size,
+                        qt:modalQt
+                    });
+                    updateCart();
+            });
+
 
             cartItem.querySelector('img').src = pizzaItem.img
             cartItem.querySelector('img').alt = pizzaName
