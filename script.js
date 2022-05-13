@@ -118,8 +118,13 @@ function updateCart(){
         qs('aside').classList.add('show');
         qs('.cart').innerHTML = '';
 
+        let subtotal = cart.map((item) => item.id === pizzaJson[modalKey].price)
+        let desconto = 0;
+        let total = 0;
+
         for(let i in cart){
             let pizzaItem = pizzaJson.find((pizza)=>pizza.id === cart[i].id);
+            subtotal += pizzaItem.price * cart[i].qt;
             let cartItem = qs('.models .cart--pizza').cloneNode(true);
             let size = parseInt(qs('.pizzaInfo--size.selected').getAttribute('data-key'));
 
@@ -139,7 +144,8 @@ function updateCart(){
             cartItem.querySelector('.cart--pizza-nome').innerHTML = pizzaName
             cartItem.querySelector('.cart--pizza--qt').innerHTML = cart[i].qt;
             cartItem.querySelector('.cart--pizza-qtmenos').addEventListener('click', () => {
-                let qtmenos = cart.filter((item) => item.id === pizzaJson[modalKey].id && item.size === size).length > 0
+                if (cart[i] > 0) {
+                    let qtmenos = cart.filter((item) => item.id === pizzaJson[modalKey].id && item.size === size).length > 0
                 qtmenos ?
                     cart = cart.map((item) => item.id === pizzaJson[modalKey].id && item.size === size ? {...item, qt: item.qt - 1} : item)
                     : cart.push({
@@ -147,6 +153,10 @@ function updateCart(){
                         size,
                         qt:modalQt
                     });
+                    
+                }else{
+                    cart.splice(i, 1);
+                }
                     updateCart();
             });
             cartItem.querySelector('.cart--pizza-qtmais').addEventListener('click', () => {
@@ -167,6 +177,13 @@ function updateCart(){
             qs('.cart').append(cartItem);
             // console.log(pizzaItem)
         }
+        desconto = subtotal * 0.1;
+        total = subtotal - desconto;
+        console.log(subtotal);
+
+        qs('.subtotal span:last-child').innerHTML = `R$ ${subtotal}`;
+        qs('.desconto span:last-child').innerHTML = `R$ ${desconto}`;
+        qs('.total span:last-child').innerHTML = `R$ ${total}`;
 
     } else {
         qs('aside').classList.remove('show');
