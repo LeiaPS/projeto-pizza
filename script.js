@@ -5,6 +5,7 @@ let cart = [];
 //qual a pizza?
 let modalKey = 0;
 
+
 const qs = (element) =>document.querySelector(element); //retorna um item que acho
 const qsAll = (element) =>document.querySelectorAll(element); //retorna um array com os items que acho
 
@@ -113,18 +114,38 @@ qs('.pizzaInfo--addButton').addEventListener('click', () => {
     closeModal();
 });
 
+qs('.menu-openner').addEventListener('click', () => {
+
+    if(cart.length > 0){
+        qs('aside').style.left = 0;
+    }
+
+});
+qs('.menu-closer').addEventListener('click', () => {
+
+        qs('aside').style.left = '100vw';
+   
+
+});
+
 function updateCart(){
+     
+
     if (cart.length > 0) {
         qs('aside').classList.add('show');
         qs('.cart').innerHTML = '';
 
-        let subtotal = cart.map((item) => item.id === pizzaJson[modalKey].price)
+
+        let subtotal = 0;
         let desconto = 0;
         let total = 0;
 
         for(let i in cart){
+            
+            
+            qs('.menu-openner span').innerHTML = cart.length;
             let pizzaItem = pizzaJson.find((pizza)=>pizza.id === cart[i].id);
-            subtotal += pizzaItem.price * cart[i].qt;
+            subtotal += pizzaItem.price[cart[i].size] * cart[i].qt;
             let cartItem = qs('.models .cart--pizza').cloneNode(true);
             let size = parseInt(qs('.pizzaInfo--size.selected').getAttribute('data-key'));
 
@@ -153,6 +174,7 @@ function updateCart(){
                         size,
                         qt:modalQt
                     });
+                    updateCart();
                     
                 }else{
                     cart.splice(i, 1);
@@ -181,12 +203,13 @@ function updateCart(){
         total = subtotal - desconto;
         console.log(subtotal);
 
-        qs('.subtotal span:last-child').innerHTML = `R$ ${subtotal}`;
-        qs('.desconto span:last-child').innerHTML = `R$ ${desconto}`;
-        qs('.total span:last-child').innerHTML = `R$ ${total}`;
+        qs('.subtotal span:last-child').innerHTML = `R$ ${subtotal.toFixed(2)}`;
+        qs('.desconto span:last-child').innerHTML = `R$ ${desconto.toFixed(2)}`;
+        qs('.total span:last-child').innerHTML = `R$ ${total.toFixed(2)}`;
 
     } else {
         qs('aside').classList.remove('show');
+        qs('aside').style.left = '100vw';
 
     }
 }
